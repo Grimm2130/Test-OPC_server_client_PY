@@ -7,7 +7,7 @@ import datetime
 from time import sleep
 
 # define the URL to listen from
-url = "opc.tcp://172.25.80.1"
+url = "opc.tcp://192.168.137.73:44"
 
 # Instantate the OPCUA server object
 server = Server()
@@ -43,11 +43,17 @@ server.start()
 print(f"Server started @ {url}")
 parts = 0
 while True:
-    stateID = randint(1,8)
-    state = getStateRef(stateID)
-    parts += randint(0,3)
-    time  = datetime.datetime.now()
-    print("StateID is: \n", stateID )
-    print(state, parts, time, "\n")
-    sleep(2)
-    machineState.set_value(state)
+    try:
+        stateID = randint(1,8)
+        state = getStateRef(stateID)
+        parts += randint(0,3)
+        time  = datetime.datetime.now()
+       
+        sleep(2)
+        if(state is not None):
+            print("StateID is: \n", stateID )
+            print(state, parts, time, "\n")
+            machineState.set_value(state)
+            part_Counter.set_value(parts)
+    except KeyboardInterrupt:
+        server.stop()
